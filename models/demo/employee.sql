@@ -1,23 +1,22 @@
-{{
-    config
-    (
-       materialized = 'table'
-    )
-}}
+version: 2
 
-with employee as
-(
 
-    select
-    EMPID as emp_id,
-    split_part(NAME,' ',1)  as emp_firstname,
-    split_part(NAME,' ',2)  as emp_lastname,
-    SALARY as emp_salary,
-    HIREDATE as emp_hiredate,
-    split_part(ADDRESS,',',1) as emp_street,
-    split_part(ADDRESS,',',2) as emp_city,
-    split_part(ADDRESS,',',3) as emp_country,
-    split_part(ADDRESS,',',4) as emp_zipcode
-    from {{source('employee','EMPLOYEE_RAW')}}--DBT_DB.PUBLIC.EMPLOYEE_RAW
-)
-select * from employee
+models:
+  - name: employee
+    description: "Employee DBT model"
+    columns:
+      - name: emp_id
+        data_tests:
+          - unique
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['1','2','3','4','5']
+                config:
+                  severity: warn
+sources:
+  - name: employee
+    database: DBT_DB
+    schema: PUBLIC
+    tables:
+      - name: EMPLOYEE_RAW
