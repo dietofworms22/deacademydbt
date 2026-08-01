@@ -1,4 +1,6 @@
 {% snapshot patient_snapshot %}
+
+
 {{
     config
     (
